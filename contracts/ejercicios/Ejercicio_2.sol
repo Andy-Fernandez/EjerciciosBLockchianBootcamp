@@ -45,44 +45,73 @@ pragma solidity 0.8.24;
  */
 
 contract Ejercicio_2 {
-    // 1
-    // definir un 'admin'
-    // no cambiar
     address public admin = 0x08Fb288FcC281969A0BBE6773857F99360f2Ca06;
+    mapping(address => bool) public whitelist;
+    bool public paused = false;
+    uint256 public startTime = block.timestamp;
+    uint256 public duration = 30 days;
+
+    // Events for logging actions
+    event AddedToWhitelist(address indexed account);
+    event RemovedFromWhitelist(address indexed account);
+    event PauseChanged(bool newStatus);
 
     modifier soloAdmin() {
-        // definir logica
+        require(msg.sender == admin, "No eres el admin");
         _;
     }
 
-    // function metodoAccesoProtegido() {
-    //     // ...logica
-    // }
+    modifier soloListaBlanca() {
+        require(whitelist[msg.sender], "Fuera de la lista blanca");
+        _;
+    }
 
-    // 2
-    // definir lista blanca con un mapping
-    // mapping listaBlanca;
-    // modifier soloListaBlanca
+    modifier soloEnTiempo() {
+        require(block.timestamp <= startTime + duration, "Fuera de tiempo");
+        _;
+    }
 
-    // function metodoPermisoProtegido
+    modifier enPausa() {
+        require(!paused, "El metodo esta pausado");
+        _;
+    }
 
-    // function incluirEnListaBlanca
 
-    // 3
-    // definir un rango de tiempo cualquiera (e.g. hoy + 30 days)
-    // En solidity se cumple que: 1 days = 86400 seconds
-    uint256 public tiempoLimite = block.timestamp + 30 days;
+    // Admin functions
+    function cambiarAdmin(address nuevoAdmin) public soloAdmin {
+        admin = nuevoAdmin;
+    }
 
-    // modifier soloEnTiempo
+    function incluirEnListaBlanca(address _account) public soloAdmin {
+        whitelist[_account] = true;
+        emit AddedToWhitelist(_account);
+    }
 
-    // function metodoTiempoProtegido
+    function excluirDeListaBlanca(address _account) public soloAdmin {
+        whitelist[_account] = false;
+        emit RemovedFromWhitelist(_account);
+    }
 
-    // 4
-    // definir un booleano para pausar
-    // bool public pausado;
-    // modifier pausa
+    function cambiarPausa(bool _nuevoEstado) public soloAdmin {
+    paused = _nuevoEstado;
+}
 
-    // function metodoPausaProtegido
 
-    // function cambiarPausa()
+
+    // Protected methods
+    function metodoAccesoProtegido() public soloAdmin {
+        // logic for admin-only access
+    }
+
+    function metodoPermisoProtegido() public soloListaBlanca {
+        // logic for whitelist-only access
+    }
+
+    function metodoTiempoProtegido() public soloEnTiempo {
+        // logic available only within a specific time frame
+    }
+
+    function metodoPausaProtegido() public enPausa {
+        // logic that can be paused
+    }
 }
