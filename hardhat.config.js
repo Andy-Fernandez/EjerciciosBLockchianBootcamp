@@ -10,7 +10,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
     },
     moonbase: {
-      url: process.env.MOONBASE_TESTNET_URL,
+      url: "https://rpc.testnet.moonbeam.network",
       accounts: [process.env.PRIVATE_KEY],
       timeout: 0,
       gas: "auto",

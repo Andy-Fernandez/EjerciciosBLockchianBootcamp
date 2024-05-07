@@ -58,23 +58,60 @@ pragma solidity 0.8.24;
  * npx hardhat test test/EjercicioTesting_1.js
  */
 
+// contract Ejercicio_1 {
+//     // Mapping simple
+//     // map: address => uint256 activosSimple;
+
+//     function guardarActivoSimple() public /**...address, uint256 */ {
+
+//     }
+
+//     // Mapping double
+//     // map: usuario => activoId => cantidad activosDouble;
+
+//     function guardarActivoDoble() public {}
+
+//     // Mapping double
+//     // error Ciudad...
+
+//     // map: ciudadId => usuario => activoId => cantidad activosTriple;
+
+//     function guardarActivoTriple() public {}
+// }
+
 contract Ejercicio_1 {
-    // Mapping simple
-    // map: address => uint256 activosSimple;
+    // Mapping simple: usuario => cantidad
+    mapping(address => uint256) public activosSimple;
 
-    function guardarActivoSimple() public /**...address, uint256 */ {
-
+    // Function to update single mapping
+    function guardarActivoSimple(address usuario, uint256 cantidad) public {
+        require(usuario != address(0), "El address no puede ser 0x00");
+        activosSimple[usuario] = cantidad;
     }
 
-    // Mapping double
-    // map: usuario => activoId => cantidad activosDouble;
+    // Mapping doble: usuario => (activoId => cantidad)
+    mapping(address => mapping(uint256 => uint256)) public activosDouble;
 
-    function guardarActivoDoble() public {}
+    // Function to update double mapping
+    function guardarActivoDoble(address usuario, uint256 activoId, uint256 cantidad) public {
+        require(usuario != address(0), "El address no puede ser 0x00");
+        require(activoId >= 1 && activoId <= 999999, "Codigo de activo invalido");
+        activosDouble[usuario][activoId] = cantidad;
+    }
 
-    // Mapping double
-    // error Ciudad...
+    // Custom error for city code validation
+    error CiudadInvalidaError(uint256 ciudadId);
 
-    // map: ciudadId => usuario => activoId => cantidad activosTriple;
+    // Mapping triple: ciudadId => (usuario => (activoId => cantidad))
+    mapping(uint256 => mapping(address => mapping(uint256 => uint256))) public activosTriple;
 
-    function guardarActivoTriple() public {}
+    // Function to update triple mapping
+    function guardarActivoTriple(uint256 ciudadId, address usuario, uint256 activoId, uint256 cantidad) public {
+        require(usuario != address(0), "El address no puede ser 0x00");
+        require(activoId >= 1 && activoId <= 999999, "Codigo de activo invalido");
+        if (!(ciudadId >= 1 && ciudadId <= 999999)) {
+            revert CiudadInvalidaError(ciudadId);
+        }
+        activosTriple[ciudadId][usuario][activoId] = cantidad;
+    }
 }
