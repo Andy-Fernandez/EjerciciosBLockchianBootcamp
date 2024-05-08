@@ -109,12 +109,12 @@ contract Ejercicio_3 {
     error SaldoInsuficiente();
 
     constructor() {
-        admin = msg.sender;
+        admin = msg.sender;  // Initialize admin with the contract creator
     }
 
     // Modifiers
     modifier soloAdmin() {
-        require(msg.sender == admin, "Solo permitido por el administrador");
+        require(msg.sender == admin, "Solo el admin puede ejecutar esta funcion");
         _;
     }
 
