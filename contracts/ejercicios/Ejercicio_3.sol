@@ -94,23 +94,20 @@ pragma solidity 0.8.24;
 //     // }
 // }
 
+
 contract Ejercicio_3 {
-    address public admin;
+    address public admin = 0x08Fb288FcC281969A0BBE6773857F99360f2Ca06;
     bool public pausado = false;
     mapping(address => uint256) public balances;
     uint256 public balanceTotal;
 
-    // Events for logging actions
+    // Custom error for insufficient funds
+    error SaldoInsuficiente();
+
+    // Event declarations
     event Deposit(address indexed from, uint256 value);
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Withdraw(address indexed to, uint256 value);
-
-    // Error for handling insufficient funds
-    error SaldoInsuficiente();
-
-    constructor() {
-        admin = msg.sender;  // Initialize admin with the contract creator
-    }
 
     // Modifiers
     modifier soloAdmin() {
