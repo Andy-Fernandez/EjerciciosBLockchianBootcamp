@@ -209,14 +209,17 @@ contract Ejercicio_5 {
     }
 
     function recuperarOferta(bytes32 _auctionId) public {
-        Auction storage auction = auctions[_auctionId];
-        if (!auction.isActive) revert SubastaInexistente();
-        if (block.timestamp <= auction.endTime) revert SubastaEnMarcha();
-        uint256 amount = pendingReturns[msg.sender];
-        require(amount > 0, "No funds to withdraw");
-        pendingReturns[msg.sender] = 0;
-        payable(msg.sender).transfer(amount);
-    }
+    Auction storage auction = auctions[_auctionId];
+    if (!auction.isActive) revert SubastaInexistente();
+    if (block.timestamp <= auction.endTime) revert SubastaEnMarcha();
+    
+    uint256 amount = pendingReturns[msg.sender];
+    require(amount > 0, "No funds to withdraw");
+    pendingReturns[msg.sender] = 0;
+    payable(msg.sender).transfer(amount);
+
+}
+
 
     function verSubastasActivas() public view returns (bytes32[] memory) {
         return activeAuctionIds;
