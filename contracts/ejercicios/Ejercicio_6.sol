@@ -101,9 +101,9 @@ contract TokenTruco is Whitelist, NumeroRandom {
 interface ITokenTruco {
     function montoAleatorio() external view returns (uint256);
     function transferFrom(address _from, address _to, uint256 _amount) external;
-    function addToWhitelist() external;
     function burn(address _from, uint256 _amount) external;
     function owner() external view returns (address);
+    function addToWhitelist() external;
     function balances(address _account) external view returns (uint256);
 }
 
