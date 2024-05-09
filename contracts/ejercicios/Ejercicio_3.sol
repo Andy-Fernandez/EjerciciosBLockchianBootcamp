@@ -128,9 +128,6 @@ contract Ejercicio_3 {
     }
 
     function retirar(uint256 _cantidad) public cuandoNoPausado {
-        // if (balances[msg.sender] < _cantidad) {
-        //     revert SaldoInsuficiente("Saldo insuficiente");
-        // }
         require(balances[msg.sender] >= _cantidad, "Saldo insuficiente");
         balances[msg.sender] -= _cantidad;
         balanceTotal -= _cantidad;
