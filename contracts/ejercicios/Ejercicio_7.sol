@@ -76,7 +76,7 @@ contract AttackerLoteria {
 
     constructor(address _loteriaAddress, uint8 _password) {
         loteriaAddress = _loteriaAddress;
-        correctPassword = _password;  // This should be the precomputed correct password
+        correctPassword = _password;  // Correct password must be provided
     }
 
     function attack() public payable {
