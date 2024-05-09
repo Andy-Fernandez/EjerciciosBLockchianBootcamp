@@ -129,7 +129,7 @@ contract Ejercicio_5 {
     bytes32[] private activeAuctionIds;  // Array to track active auction IDs
 
     event SubastaCreada(bytes32 indexed auctionId, address indexed creator);
-    event OfertaPropuesta(address indexed bidder, uint256 bid, bytes32 auctionId);
+    event OfertaPropuesta(address indexed bidder, uint256 bid);
     event SubastaFinalizada(address indexed winner, uint256 bid);
 
     error CantidadIncorrectaEth();
@@ -172,15 +172,22 @@ contract Ejercicio_5 {
         }
 
         pendingReturns[msg.sender] += msg.value;
-        if (currentBid > auction.highestBid) {
-            if (auction.highestBidder != address(0)) {
-                pendingReturns[auction.highestBidder] += auction.highestBid;
-            }
-            auction.highestBidder = msg.sender;
-            auction.highestBid = currentBid;
-        }
 
-        emit OfertaPropuesta(msg.sender, msg.value, _auctionId);
+        // Creo que podemos eliminar todo este bloque de código
+        // if (currentBid > auction.highestBid) { // Esta validación ya se hizo
+        //     if (auction.highestBidder != address(0)) {
+        //         pendingReturns[auction.highestBidder] += auction.highestBid;
+        //     }
+        //     auction.highestBidder = msg.sender;
+        //     auction.highestBid = currentBid;
+        // }
+
+        // Y solo actualizamos el valor de la oferta más alta
+        // ya que ya validamos que esta oferta es mayor a la anterior
+        auction.highestBidder = msg.sender;
+        auction.highestBid = currentBid;
+
+        emit OfertaPropuesta(msg.sender, currentBid);
     }
 
     function finalizarSubasta(bytes32 _auctionId) public {
@@ -201,7 +208,10 @@ contract Ejercicio_5 {
         pendingReturns[auction.highestBidder] += 1 ether;
     }
 
-    function recuperarOferta() public {
+    function recuperarOferta(bytes32 _auctionId) public {
+        Auction storage auction = auctions[_auctionId];
+        if (!auction.isActive) revert SubastaInexistente();
+        if (block.timestamp <= auction.endTime) revert SubastaEnMarcha();
         uint256 amount = pendingReturns[msg.sender];
         require(amount > 0, "No funds to withdraw");
         pendingReturns[msg.sender] = 0;
