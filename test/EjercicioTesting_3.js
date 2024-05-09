@@ -150,7 +150,7 @@ describe("Cajero Automatico", function () {
         cajeroAutomatico
           .connect(otherAccounts[2])
           .transferir(otherAccounts[0].address, 500)
-      ).to.be.revertedWithCustomError(contract, "SaldoInsuficiente");
+      ).to.revertedWithCustomError(cajeroAutomatico, "SaldoInsuficiente");
     });
 
     it("Emite evento personalizado de Transfer", async function () {
