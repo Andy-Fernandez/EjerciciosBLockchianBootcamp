@@ -210,7 +210,7 @@ contract Ejercicio_5 {
 
     function recuperarOferta(bytes32 _auctionId) public {
         Auction storage auction = auctions[_auctionId];
-        if (!auction.isActive) revert SubastaInexistente();
+        // if (!auction.isActive) revert SubastaInexistente();
         if (block.timestamp <= auction.endTime) revert SubastaEnMarcha();
         uint256 amount = pendingReturns[msg.sender];
         require(amount > 0, "No funds to withdraw");
