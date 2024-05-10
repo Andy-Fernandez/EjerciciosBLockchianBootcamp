@@ -36,9 +36,33 @@ var {
  * @param {string} officialPublicKey The official's public key used to encrypt the message
  * @return {string} Returns a stringified version of the encrypted vote
  */
+// async function encryptVote(voterPrivateKey, candidate, officialPublicKey) {
+//   return "";
+// }
+var {
+  sign,
+  encryptWithPublicKey,
+  recoverPublicKey,
+} = require("eth-crypto");
+
 async function encryptVote(voterPrivateKey, candidate, officialPublicKey) {
-  return "";
+  // Hash the candidate's name to get a fixed-length message
+  const message = candidate;
+  const hashedMessage = hash.keccak256(message);
+
+  // Sign the hash of the candidate's name
+  const signature = await sign(voterPrivateKey, hashedMessage);
+
+  // Prepare the payload
+  const payload = JSON.stringify({ message: candidate, signature });
+
+  // Encrypt the payload with the election official's public key
+  const encryptedVote = await encryptWithPublicKey(officialPublicKey, payload);
+
+  // Return a stringified version of the encrypted object
+  return cipher.stringify(encryptedVote);
 }
+
 
 /**
  * @note This function decrypts each vote with the official's private key and counts each valid vote
@@ -49,12 +73,46 @@ async function encryptVote(voterPrivateKey, candidate, officialPublicKey) {
  *
  * @return Returns table of votes where each candidate has a number of votes
  */
+// async function decryptVoteAndCount(
+//   publicKeyVoters,
+//   encryptedVotes,
+//   officialPrivateKey
+// ) {
+//   return {};
+// }
+var {
+  decryptWithPrivateKey,
+  recoverPublicKey,
+} = require("eth-crypto");
+
 async function decryptVoteAndCount(
   publicKeyVoters,
   encryptedVotes,
   officialPrivateKey
 ) {
-  return {};
+  const voteCount = {};
+
+  for (const encryptedVote of encryptedVotes) {
+    // Decrypt the vote
+    const decryptedString = await decryptWithPrivateKey(officialPrivateKey, cipher.parse(encryptedVote));
+    const decryptedVote = JSON.parse(decryptedString);
+
+    // Recover the public key from the signature
+    const voterPublicKey = await recoverPublicKey(decryptedVote.signature, hash.keccak256(decryptedVote.message));
+
+    // Verify that the public key is from a legitimate voter
+    if (publicKeyVoters.includes(voterPublicKey)) {
+      // Count the vote if the public key is verified
+      const candidate = decryptedVote.message;
+      if (!voteCount[candidate]) {
+        voteCount[candidate] = 0;
+      }
+      voteCount[candidate]++;
+    }
+  }
+
+  return voteCount;
 }
+
 
 module.exports = { encryptVote, decryptVoteAndCount };
