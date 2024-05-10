@@ -102,7 +102,7 @@ class ECC {
   }
 }
 
-
+module.exports = { ECC };
 
 // const curve = new ECC(-3, 4, 17);
 // const pointA = { x: 1, y: 6 };
