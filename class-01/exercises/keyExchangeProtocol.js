@@ -88,9 +88,35 @@
  */
 
 // Import your Elliptic Curve
+// Assuming the ECC class is already correctly implemented and handles point multiplication.
 var { ECC } = require("../learning/0_EllipticCurve");
 
-var a = -3;
-var p = 17;
+// Initialize the elliptic curve with the specified parameters
+var ecc = new ECC(-3, 4, 17);  // a = -3, b = 4, p = 17 as per the curve equation y^2 = x^3 - 3x + 4 mod 17
 
-// module.exports = { Sx: , Sy: , QBx: , QBy:  };
+// Define the generator point
+var G = { x: 12, y: 9 };
+
+// Define Bob's private key
+var nB = 13;
+
+// Define Alice's public key
+var QA = { x: 0, y: 15 };
+
+// Compute Bob's public key QB = nB * G
+var QB = ecc.scalarMultiplication(G, nB);
+
+// Compute the shared secret S = nB * QA
+var S = ecc.scalarMultiplication(QA, nB);
+
+// Export the results
+module.exports = {
+    Sx: S.x, 
+    Sy: S.y, 
+    QBx: QB.x, 
+    QBy: QB.y
+};
+
+// For debugging purposes, print the computed values
+console.log("Bob's Public Key (QB):", QB);
+console.log("Shared Secret (S):", S);

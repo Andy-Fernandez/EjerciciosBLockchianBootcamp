@@ -102,15 +102,17 @@ class ECC {
   }
 }
 
-const curve = new ECC(-3, 4, 17);
-const pointA = { x: 1, y: 6 };
-const pointB = { x: 9, y: 14 };
 
 
-// Verificar la adición de puntos
-const pointSum = curve.pointAddition(pointA, pointB);
-console.log("Point A + Point B:", pointSum); // Debería imprimir (8, 4)
+// const curve = new ECC(-3, 4, 17);
+// const pointA = { x: 1, y: 6 };
+// const pointB = { x: 9, y: 14 };
 
-// Verificar la multiplicación escalar
-const scalarResult = curve.scalarMultiplication(pointA, 4);
-console.log("Point A * 4:", scalarResult); // Debería imprimir (12, 8)
+
+// // Verificar la adición de puntos
+// const pointSum = curve.pointAddition(pointA, pointB);
+// console.log("Point A + Point B:", pointSum); // Debería imprimir (8, 4)
+
+// // Verificar la multiplicación escalar
+// const scalarResult = curve.scalarMultiplication(pointA, 4);
+// console.log("Point A * 4:", scalarResult); // Debería imprimir (12, 8)
