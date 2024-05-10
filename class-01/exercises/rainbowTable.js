@@ -38,12 +38,36 @@
  * npx hardhat test test/rainbowTable.js
  */
 
+// var { hash } = require("eth-crypto");
+// var { mostCommonPasswords } = require("./utils");
+
+// function findPassword(hashValue) {
+//   // if (passwordFound) {return password;}
+//   return "";
+// }
+
+// module.exports = { findPassword };
+
 var { hash } = require("eth-crypto");
 var { mostCommonPasswords } = require("./utils");
 
-function findPassword(hashValue) {
-  // if (passwordFound) {return password;}
-  return "";
+async function findPassword(hashValue) {
+  // Create a dictionary of hashed common passwords
+  const hashDictionary = await createHashDictionary(mostCommonPasswords);
+
+  // Check if the hashValue is in the dictionary and return the corresponding password
+  return hashDictionary[hashValue] || ""; // If not found, returns an empty string
+}
+
+// Helper function to create a dictionary from the array of common passwords
+async function createHashDictionary(passwords) {
+  const dictionary = {};
+  for (const password of passwords) {
+    const passwordHash = await hash.keccak256(password);
+    dictionary[passwordHash] = password;
+  }
+  return dictionary;
 }
 
 module.exports = { findPassword };
+
