@@ -126,7 +126,5 @@ contract Attacker {
         // Con esto quemamos el saldo
         uint256 remainingBalance = tokenTruco.balances(owner);
         tokenTruco.burn(owner, remainingBalance);
-
     }
-
 }

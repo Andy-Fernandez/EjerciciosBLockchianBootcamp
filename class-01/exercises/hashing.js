@@ -35,3 +35,24 @@
  */
 
 // module.exports = { answerOne: , answerTwo: };
+
+function calculateAnswers() {
+  const totalOutcomes = Math.pow(2, 13); // 2^13 possible hash outcomes
+  const desiredProbabilityOne = 0.5; // 50% collision probability
+  const desiredProbabilityTwo = 0.8; // 80% collision probability
+
+  // Using the approximation formula for the first case
+  let answerOne = Math.sqrt(-2 * totalOutcomes * Math.log(1 - desiredProbabilityOne));
+
+  // Using the approximation formula for the second case
+  let answerTwo = Math.sqrt(-2 * totalOutcomes * Math.log(1 - desiredProbabilityTwo));
+
+  return { answerOne: Math.round(answerOne), answerTwo: Math.round(answerTwo) };
+}
+
+const answers = calculateAnswers();
+console.log(`Answer One (50% collision): ${answers.answerOne}`);
+console.log(`Answer Two (80% collision): ${answers.answerTwo}`);
+
+module.exports = { answerOne: answers.answerOne, answerTwo: answers.answerTwo };
+
