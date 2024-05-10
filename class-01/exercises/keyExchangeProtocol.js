@@ -91,32 +91,31 @@
 // Assuming the ECC class is already correctly implemented and handles point multiplication.
 var { ECC } = require("../learning/0_EllipticCurve");
 
-// Initialize the elliptic curve with the specified parameters
-var ecc = new ECC(-3, 4, 17);  // a = -3, b = 4, p = 17 as per the curve equation y^2 = x^3 - 3x + 4 mod 17
+const { keccak_256 } = require("js-sha3");
+const { expect } = require("chai");
 
-// Define the generator point
-var G = { x: 12, y: 9 };
+const ecc = new ECC(-3, 4, 17);
+const G = { x: 12, y: 9 };
+const nB = 13;
+const QA = { x: 0, y: 15 };
 
-// Define Bob's private key
-var nB = 13;
+const QB = ecc.scalarMultiplication(G, nB);
+const S = ecc.scalarMultiplication(QA, nB);
 
-// Define Alice's public key
-var QA = { x: 0, y: 15 };
+describe("Key Exchange Protocol Test", function () {
+  it("Public Key Bob coordinate x is correct", function () {
+    const QBxHash = keccak_256(String(QB.x));
+    expect(QBxHash).to.equal("expected hash here");
+  });
 
-// Compute Bob's public key QB = nB * G
-var QB = ecc.scalarMultiplication(G, nB);
+  it("Public Key Bob coordinate y is correct", function () {
+    const QByHash = keccak_256(String(QB.y));
+    expect(QByHash).to.equal("expected hash here");
+  });
 
-// Compute the shared secret S = nB * QA
-var S = ecc.scalarMultiplication(QA, nB);
+  // Additional tests for shared secret
+});
 
-// Export the results
-module.exports = {
-    Sx: S.x, 
-    Sy: S.y, 
-    QBx: QB.x, 
-    QBy: QB.y
-};
-
-// For debugging purposes, print the computed values
 console.log("Bob's Public Key (QB):", QB);
 console.log("Shared Secret (S):", S);
+
