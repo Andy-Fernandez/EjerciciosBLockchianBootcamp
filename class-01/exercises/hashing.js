@@ -36,20 +36,16 @@
 
 // module.exports = { answerOne: , answerTwo: };
 
-var { keccak256 } = require("js-sha3");
 
-// Longitud del hash en bits
 const hashLength = 13;
-// Espacio de hash
+
 const hashSpace = 2 ** hashLength;
 
-// 1. Colisión con un secreto
-const pCollision = 1 / hashSpace; // Probabilidad de colisión con un secreto
-const n1 = Math.ceil(Math.log(1 - 0.5) / Math.log(1 - pCollision)); // Número de secretos para tener al menos un 50% de probabilidad de colisión
+// 1Colisión con un secreto
+const pCollision = 1 / hashSpace; 
+const n1 = Math.ceil(Math.log(1 - 0.5) / Math.log(1 - pCollision)); 
 
-// 2. Colisión de dos secretos distintos
-// const pNoCollision = 1 - pCollision; // Probabilidad de no colisión entre dos secretos distintos
-// const n2 = Math.ceil(2 * Math.log(1 - 0.8) / Math.log(pNoCollision)); // Número de secretos para tener al menos un 80% de probabilidad de colisión entre dos secretos distintos
+// 2Colisión de dos secretos distintos
 const n2 = Math.ceil(Math.sqrt(2 * Math.pow(2, hashLength) * Math.log(1 / (1 - 0.8))));
 
 
