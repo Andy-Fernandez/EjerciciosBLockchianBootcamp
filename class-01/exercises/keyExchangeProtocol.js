@@ -87,34 +87,25 @@
  * npx hardhat test test/keyExchangeProtocol.js
  */
 
-// Import your Elliptic Curve
-// Assuming the ECC class is already correctly implemented and handles point multiplication.
-var { ECC } = require("../learning/0_EllipticCurve");
+const { ECC } = require("../learning/0_EllipticCurve");
 
-const { keccak_256 } = require("js-sha3");
-const { expect } = require("chai");
 
-const ecc = new ECC(-3, 4, 17);
-const G = { x: 12, y: 9 };
+const a = -3;
+const b = 4;
+const p = 17;
 const nB = 13;
+const G = { x: 12, y: 9 };
 const QA = { x: 0, y: 15 };
 
+const ecc = new ECC(a, b, p);
+
 const QB = ecc.scalarMultiplication(G, nB);
+
 const S = ecc.scalarMultiplication(QA, nB);
 
-describe("Key Exchange Protocol Test", function () {
-  it("Public Key Bob coordinate x is correct", function () {
-    const QBxHash = keccak_256(String(QB.x));
-    expect(QBxHash).to.equal("expected hash here");
-  });
-
-  it("Public Key Bob coordinate y is correct", function () {
-    const QByHash = keccak_256(String(QB.y));
-    expect(QByHash).to.equal("expected hash here");
-  });
-
-});
-
-console.log("Bob's Public Key (QB):", QB);
-console.log("Shared Secret (S):", S);
-
+module.exports = {
+    Sx: S.x, 
+    Sy: S.y, 
+    QBx: QB.x, 
+    QBy: QB.y
+};
