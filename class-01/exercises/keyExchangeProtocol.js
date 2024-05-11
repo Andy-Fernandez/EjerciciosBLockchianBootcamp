@@ -113,7 +113,6 @@ describe("Key Exchange Protocol Test", function () {
     expect(QByHash).to.equal("expected hash here");
   });
 
-  // Additional tests for shared secret
 });
 
 console.log("Bob's Public Key (QB):", QB);

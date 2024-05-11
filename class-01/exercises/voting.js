@@ -93,16 +93,12 @@ async function decryptVoteAndCount(
   const voteCount = {};
 
   for (const encryptedVote of encryptedVotes) {
-    // Decrypt the vote
     const decryptedString = await decryptWithPrivateKey(officialPrivateKey, cipher.parse(encryptedVote));
     const decryptedVote = JSON.parse(decryptedString);
 
-    // Recover the public key from the signature
     const voterPublicKey = await recoverPublicKey(decryptedVote.signature, hash.keccak256(decryptedVote.message));
 
-    // Verify that the public key is from a legitimate voter
     if (publicKeyVoters.includes(voterPublicKey)) {
-      // Count the vote if the public key is verified
       const candidate = decryptedVote.message;
       if (!voteCount[candidate]) {
         voteCount[candidate] = 0;
