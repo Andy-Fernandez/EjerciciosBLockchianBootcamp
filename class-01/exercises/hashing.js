@@ -38,7 +38,6 @@
 
 const { keccak256 } = require("js-sha3");
 
-// Calcula la cantidad de intentos necesarios para tener una colisión del 50%.
 function calculateCollision50() {
     const hashLength = 13;
     const totalUniqueHashes = Math.pow(2, hashLength);
@@ -49,7 +48,6 @@ function calculateCollision50() {
     return numberOfSecrets;
 }
 
-// Calcula la cantidad de intentos necesarios para tener una colisión del 80% entre dos valores únicos.
 function calculateCollision80() {
     const hashSize = Math.pow(2, 13);
     const probability = 0.8;
@@ -57,7 +55,6 @@ function calculateCollision80() {
     return Math.ceil(Math.sqrt(2 * hashSize * Math.log(1 / (1 - probability))));
 }
 
-// Calcula los números y hashea los resultados
 function hashAnswers() {
     const answerOne = calculateCollision50(); 
     const answerTwo = calculateCollision80(); 
