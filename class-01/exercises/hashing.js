@@ -36,40 +36,24 @@
 
 // module.exports = { answerOne: , answerTwo: };
 
-const { keccak256 } = require("js-sha3");
+var { keccak256 } = require("js-sha3");
 
-function calculateCollision50() {
-    const hashLength = 13;
-    const totalUniqueHashes = Math.pow(2, hashLength);
-    const probabilityOfCollision = 0.5;
-  
-    const numberOfSecrets = Math.ceil(Math.sqrt(2 * totalUniqueHashes * Math.log(1 / (1 - probabilityOfCollision))));
-  
-    return numberOfSecrets;
-}
+// Longitud del hash en bits
+const hashLength = 13;
+// Espacio de hash
+const hashSpace = 2 ** hashLength;
 
-function calculateCollision80() {
-    const hashSize = Math.pow(2, 13);
-    const probability = 0.8;
+// 1. Colisión con un secreto
+const pCollision = 1 / hashSpace; // Probabilidad de colisión con un secreto
+const n1 = Math.ceil(Math.log(1 - 0.5) / Math.log(1 - pCollision)); // Número de secretos para tener al menos un 50% de probabilidad de colisión
 
-    return Math.ceil(Math.sqrt(2 * hashSize * Math.log(1 / (1 - probability))));
-}
+// 2. Colisión de dos secretos distintos
+// const pNoCollision = 1 - pCollision; // Probabilidad de no colisión entre dos secretos distintos
+// const n2 = Math.ceil(2 * Math.log(1 - 0.8) / Math.log(pNoCollision)); // Número de secretos para tener al menos un 80% de probabilidad de colisión entre dos secretos distintos
+const n2 = Math.ceil(Math.sqrt(2 * Math.pow(2, hashLength) * Math.log(1 / (1 - 0.8))));
 
-function hashAnswers() {
-    const answerOne = calculateCollision50(); 
-    const answerTwo = calculateCollision80(); 
 
-    var hashAnswerOne = keccak256(String(answerOne));
-    var hashAnswerTwo = keccak256(String(answerTwo));
+module.exports = { answerOne: n1, answerTwo: n2 };
 
-    console.log(`Answer One (Collision 50%): ${hashAnswerOne}`);
-    console.log(`Answer Two (Collision 80%): ${hashAnswerTwo}`);
-
-    return { answerOne, answerTwo };
-}
-
-const { answerOne, answerTwo } = hashAnswers();
-
-module.exports = { answerOne, answerTwo };
 
 
