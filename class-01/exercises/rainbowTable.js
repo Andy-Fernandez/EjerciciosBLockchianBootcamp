@@ -51,21 +51,18 @@
 var { hash } = require("eth-crypto");
 var { mostCommonPasswords } = require("./utils");
 
-async function findPassword(hashValue) {
-  const hashDictionary = await createHashDictionary(mostCommonPasswords);
-
-  return hashDictionary[hashValue] || "";
-}
-
-async function createHashDictionary(passwords) {
-  const dictionary = {};
-  for (const password of passwords) {
-    const passwordHash = await hash.keccak256(password);
-    dictionary[passwordHash] = password;
+function findPassword(hashValue) {
+  for (let i = 0; i < mostCommonPasswords.length; i++) {
+    const passwordHash = hash.keccak256(mostCommonPasswords[i]);
+    if (passwordHash === hashValue) {
+      return mostCommonPasswords[i];
+    }
   }
-  return dictionary;
+  return "";
 }
 
 module.exports = { findPassword };
+
+
 
 
