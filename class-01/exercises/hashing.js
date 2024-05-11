@@ -36,23 +36,43 @@
 
 // module.exports = { answerOne: , answerTwo: };
 
-function calculateAnswers() {
-  const totalOutcomes = Math.pow(2, 13); // 2^13 possible hash outcomes
-  const desiredProbabilityOne = 0.5; // 50% collision probability
-  const desiredProbabilityTwo = 0.8; // 80% collision probability
+const { keccak256 } = require("js-sha3");
 
-  // Using the approximation formula for the first case
-  let answerOne = Math.sqrt(-2 * totalOutcomes * Math.log(1 - desiredProbabilityOne));
-
-  // Using the approximation formula for the second case
-  let answerTwo = Math.sqrt(-2 * totalOutcomes * Math.log(1 - desiredProbabilityTwo));
-
-  return { answerOne: Math.round(answerOne), answerTwo: Math.round(answerTwo) };
+// Calcula la cantidad de intentos necesarios para tener una colisión del 50%.
+function calculateCollision50() {
+    const hashLength = 13;
+    const totalUniqueHashes = Math.pow(2, hashLength);
+    const probabilityOfCollision = 0.5;
+  
+    const numberOfSecrets = Math.ceil(Math.sqrt(2 * totalUniqueHashes * Math.log(1 / (1 - probabilityOfCollision))));
+  
+    return numberOfSecrets;
 }
 
-const answers = calculateAnswers();
-console.log(`Answer One (50% collision): ${answers.answerOne}`);
-console.log(`Answer Two (80% collision): ${answers.answerTwo}`);
+// Calcula la cantidad de intentos necesarios para tener una colisión del 80% entre dos valores únicos.
+function calculateCollision80() {
+    const hashSize = Math.pow(2, 13);
+    const probability = 0.8;
 
-module.exports = { answerOne: answers.answerOne, answerTwo: answers.answerTwo };
+    return Math.ceil(Math.sqrt(2 * hashSize * Math.log(1 / (1 - probability))));
+}
+
+// Calcula los números y hashea los resultados
+function hashAnswers() {
+    const answerOne = calculateCollision50(); 
+    const answerTwo = calculateCollision80(); 
+
+    var hashAnswerOne = keccak256(String(answerOne));
+    var hashAnswerTwo = keccak256(String(answerTwo));
+
+    console.log(`Answer One (Collision 50%): ${hashAnswerOne}`);
+    console.log(`Answer Two (Collision 80%): ${hashAnswerTwo}`);
+
+    return { answerOne, answerTwo };
+}
+
+const { answerOne, answerTwo } = hashAnswers();
+
+module.exports = { answerOne, answerTwo };
+
 
